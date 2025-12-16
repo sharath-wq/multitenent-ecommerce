@@ -77,7 +77,7 @@ export interface Config {
   };
   collectionsJoins: {
     categories: {
-      subcategoreis: 'categories';
+      subcategories: 'categories';
     };
   };
   collectionsSelect: {
@@ -175,7 +175,7 @@ export interface Category {
   slug: string;
   color?: string | null;
   parent?: (string | null) | Category;
-  subcategoreis?: {
+  subcategories?: {
     docs?: (string | Category)[];
     hasNextPage?: boolean;
     totalDocs?: number;
@@ -310,7 +310,7 @@ export interface CategoriesSelect<T extends boolean = true> {
   slug?: T;
   color?: T;
   parent?: T;
-  subcategoreis?: T;
+  subcategories?: T;
   updatedAt?: T;
   createdAt?: T;
 }
