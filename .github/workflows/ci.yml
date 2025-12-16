@@ -27,3 +27,6 @@ jobs:
 
     - name: Build project
       run: bun run build
+      env:
+        PAYLOAD_SECRET: "ci_super_secret_key_for_build_only"
+        DATABASE_URI: "mongodb://127.0.0.1/test" # Dummy URI for build process
