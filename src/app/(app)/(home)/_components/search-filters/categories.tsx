@@ -4,14 +4,14 @@ import { ListFilterIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { CustomCategory } from "../../types";
+import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 import { Button } from "@/components/ui/button";
 import { CategoryDropdown } from "./category-dropdown";
 import { CategoriesSidebar } from "./categories-sidebar";
 
 interface IProps {
-  data: CustomCategory[];
+  data: CategoriesGetManyOutput;
 }
 
 export const Categories = ({ data }: IProps) => {
@@ -68,7 +68,6 @@ export const Categories = ({ data }: IProps) => {
       <CategoriesSidebar
         open={isSidebarOpen}
         onOpenChange={setIsSidebarOpen}
-        data={data}
       />
 
 
@@ -121,7 +120,7 @@ export const Categories = ({ data }: IProps) => {
             onClick={() => setIsSidebarOpen(true)}
           >
             View All
-            <ListFilterIcon className="mt-2" />
+            <ListFilterIcon />
           </Button>
         </div>
       </div>

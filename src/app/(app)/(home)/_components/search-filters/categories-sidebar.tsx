@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { useTRPC } from "@/trpc/client";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-
-import { CustomCategory } from "../../types";
 
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import {
@@ -11,21 +11,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 interface IProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  data: CustomCategory[]; // TODO: remove this later
 }
 
-export const CategoriesSidebar = ({ open, onOpenChange, data }: IProps) => {
+export const CategoriesSidebar = ({ open, onOpenChange }: IProps) => {
   const router = useRouter();
+  const trpc = useTRPC();
+  const { data } = useQuery(trpc.categories.getMany.queryOptions());
 
   const [parentCategories, setParentCategories] = useState<
-    CustomCategory[] | null
+    CategoriesGetManyOutput | null
   >(null);
   const [selectedCategory, setSelectedCategory] =
-    useState<CustomCategory | null>(null);
+    useState<CategoriesGetManyOutput[1] | null>(null);
 
   // if we have parent categories show those, otherwise show root categories
   const currentCategories = parentCategories ?? data ?? [];
@@ -36,9 +38,9 @@ export const CategoriesSidebar = ({ open, onOpenChange, data }: IProps) => {
     onOpenChange(open);
   };
 
-  const handleCategoryClick = (category: CustomCategory) => {
+  const handleCategoryClick = (category: CategoriesGetManyOutput[1]) => {
     if (category.subcategories && category.subcategories.length > 0) {
-      setParentCategories(category.subcategories as CustomCategory[]);
+      setParentCategories(category.subcategories as CategoriesGetManyOutput);
       setSelectedCategory(category);
     } else {
       // This is a leaf category (no subcategories)
@@ -60,12 +62,12 @@ export const CategoriesSidebar = ({ open, onOpenChange, data }: IProps) => {
 
   const handleBackClick = () => {
     if (parentCategories) {
-        setParentCategories(null);
-        setSelectedCategory(null)
+      setParentCategories(null);
+      setSelectedCategory(null);
     }
-  }
+  };
 
-  const backgroundColor = selectedCategory?.color || "white"
+  const backgroundColor = selectedCategory?.color || "white";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -73,7 +75,7 @@ export const CategoriesSidebar = ({ open, onOpenChange, data }: IProps) => {
         side="left"
         className="p-0 transition-none"
         style={{
-          backgroundColor 
+          backgroundColor,
         }}
       >
         <SheetHeader className="p-4 border-b">
