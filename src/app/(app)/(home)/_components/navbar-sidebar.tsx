@@ -19,7 +19,7 @@ interface IProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const NavbarSidear = ({ items, open, onOpenChange }: IProps) => {
+export const NavbarSidebar = ({ items, open, onOpenChange }: IProps) => {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="p-0 transition-none">
