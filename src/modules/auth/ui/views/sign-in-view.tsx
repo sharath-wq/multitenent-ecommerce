@@ -7,9 +7,8 @@ import { useTRPC } from "@/trpc/client";
 import { useForm } from "react-hook-form";
 import { Poppins } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 
 import { cn } from "@/lib/utils";
 
@@ -35,14 +34,18 @@ export const SignInView = () => {
   const router = useRouter();
 
   const trpc = useTRPC();
-  const login = useMutation(trpc.auth.login.mutationOptions({
-    onError: (error) => {
-      toast.error(error.message)
-    },
-    onSuccess: () => {
-      router.push("/")
-    }
-  }));
+  const queryClient = useQueryClient();
+  const login = useMutation(
+    trpc.auth.login.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter()) 
+        router.push("/");
+      },
+    })
+  );
 
   const form = useForm<z.infer<typeof loginSchema>>({
     mode: "all",
@@ -56,7 +59,6 @@ export const SignInView = () => {
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     login.mutate(values);
   };
-
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5">
@@ -87,9 +89,7 @@ export const SignInView = () => {
               </Button>
             </div>
 
-            <h1 className="text-4xl font-medium">
-              Welcome back to Funroad.
-            </h1>
+            <h1 className="text-4xl font-medium">Welcome back to Funroad.</h1>
 
             <FormField
               name="email"
