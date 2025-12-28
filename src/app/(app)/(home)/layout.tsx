@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-import { Footer } from "./_components/footer";
-import { Navbar } from "./_components/navbar";
-import { SearchFilters, SearchFiltersSkelton } from "./_components/search-filters";
+import { Footer } from "@/modules/home/ui/components/footer";
+import { Navbar } from "@/modules/home/ui/components/navbar";
+import { SearchFilters, SearchFiltersSkelton } from "@/modules/home/ui/components/search-filters";
 
 interface IProps {
   children: React.ReactNode;
