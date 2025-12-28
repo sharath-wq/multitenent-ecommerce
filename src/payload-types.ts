@@ -195,7 +195,7 @@ export interface Product {
   name: string;
   description?: string | null;
   /**
-   * Price in INR
+   * Price in USD
    */
   price: number;
   category?: (string | null) | Category;
