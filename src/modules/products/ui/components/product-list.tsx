@@ -11,8 +11,6 @@ interface IProps {
 export const ProductList = ({ category }: IProps) => {
   const [filters] = useProductFilters();
 
-  console.log({ filters });
-
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
     trpc.products.getMany.queryOptions({ category, ...filters })
