@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
 import { InboxIcon } from "lucide-react";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
@@ -11,16 +12,18 @@ import { ProductCard, ProductCardSkelton } from "./product-card";
 
 interface IProps {
   category?: string;
+  tenantSlug?: string;
+  narrowView?: boolean;
 }
 
-export const ProductList = ({ category }: IProps) => {
+export const ProductList = ({ category, tenantSlug, narrowView }: IProps) => {
   const [filters] = useProductFilters();
 
   const trpc = useTRPC();
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useSuspenseInfiniteQuery(
       trpc.products.getMany.infiniteQueryOptions(
-        { ...filters, category, limit: DEFAULT_LIMIT },
+        { ...filters, category, tenantSlug, limit: DEFAULT_LIMIT },
         {
           getNextPageParam: (lastPage) => {
             return lastPage.docs.length > 0 ? lastPage.nextPage : undefined;
@@ -40,7 +43,12 @@ export const ProductList = ({ category }: IProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+      <div
+        className={cn(
+          "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4",
+          narrowView && "lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3"
+        )}
+      >
         {data?.pages
           .flatMap((page) => page.docs)
           .map((product) => (
@@ -49,9 +57,9 @@ export const ProductList = ({ category }: IProps) => {
               id={product.id}
               name={product.name}
               imageUrl={product.image?.url}
-              authorUsername={"Test"}
+              tenantSlug={product.tenant?.slug}
               reviewRating={3}
-              authorImageUrl={undefined}
+              tenantImageUrl={product.tenant?.image?.url}
               reviewCount={5}
               price={product.price}
             />
@@ -73,9 +81,14 @@ export const ProductList = ({ category }: IProps) => {
   );
 };
 
-export const ProductListSkelton = () => {
+export const ProductListSkelton = ({ narrowView }: IProps) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+    <div
+      className={cn(
+        "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4",
+        narrowView && "lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3"
+      )}
+    >
       {Array.from({ length: DEFAULT_LIMIT }).map((_, index) => (
         <ProductCardSkelton key={index} />
       ))}
