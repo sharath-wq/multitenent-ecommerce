@@ -140,13 +140,40 @@ const categories = [
 const seed = async () => {
   try {
     const payload = await getPayload({ config });
-    payload.logger.info('Seeding database...');
+
+    // Create admin tenant
+    const adminTenant = await payload.create({
+      collection: "tenants",
+      data: {
+        name: "admin",
+        slug: "admin",
+        stripeAccountId: "admin",
+      },
+    });
+
+    // Create admin user
+    await payload.create({
+      collection: "users",
+      data: {
+        email: "admin@demo.com",
+        password: "demo",
+        roles: ["super-admin"],
+        username: "admin",
+        tenants: [
+          {
+            tenant: adminTenant.id,
+          },
+        ],
+      },
+    });
+
+    payload.logger.info("Seeding database...");
 
     for (const category of categories) {
       payload.logger.info(`- Seeding category: ${category.name}`);
 
       const parentCategory = await payload.create({
-        collection: 'categories',
+        collection: "categories",
         data: {
           name: category.name,
           slug: category.slug,
@@ -161,7 +188,7 @@ const seed = async () => {
             `  - Seeding sub-category: ${subCategory.name} for category: ${category.name}`
           );
           await payload.create({
-            collection: 'categories',
+            collection: "categories",
             data: {
               name: subCategory.name,
               slug: subCategory.slug,
@@ -171,7 +198,7 @@ const seed = async () => {
         }
       }
     }
-    payload.logger.info('Database seeding complete.');
+    payload.logger.info("Database seeding complete.");
     process.exit(0);
   } catch (error) {
     console.error(error);
@@ -180,4 +207,3 @@ const seed = async () => {
 };
 
 seed();
-
