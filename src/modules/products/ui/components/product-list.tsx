@@ -49,9 +49,9 @@ export const ProductList = ({ category }: IProps) => {
               id={product.id}
               name={product.name}
               imageUrl={product.image?.url}
-              authorUsername={"Test"}
+              authorUsername={product.tenant?.name}
               reviewRating={3}
-              authorImageUrl={undefined}
+              authorImageUrl={product.tenant?.image?.url}
               reviewCount={5}
               price={product.price}
             />
