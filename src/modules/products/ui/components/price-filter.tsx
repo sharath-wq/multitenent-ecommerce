@@ -3,6 +3,8 @@ import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { formatCurrency } from "@/lib/utils";
+
 interface IProps {
   minPrice?: string | null;
   maxPrice?: string | null;
@@ -23,12 +25,7 @@ export const formatAsCurrency = (value: string) => {
 
   if (isNaN(numberValue)) return "";
 
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(numberValue);
+  return formatCurrency(numberValue)
 };
 
 export const PriceFilter = ({
