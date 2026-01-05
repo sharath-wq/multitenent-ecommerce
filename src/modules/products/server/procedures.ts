@@ -8,6 +8,25 @@ import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import { sortValues } from "../search-params";
 
 export const productRouter = createTRPCRouter({
+  getOne: baseProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const product = await ctx.db.findByID({
+        collection: "products",
+        id: input.id,
+        depth: 2,
+      });
+
+      return {
+        ...product,
+        image: product.image as Media | null,
+        tenant: product.tenant as Tenant & { image: Media | null },
+      };
+    }),
   getMany: baseProcedure
     .input(
       z.object({
@@ -53,8 +72,8 @@ export const productRouter = createTRPCRouter({
 
       if (input.tenantSlug) {
         where["tenant.slug"] = {
-          equals: input.tenantSlug
-        }
+          equals: input.tenantSlug,
+        };
       }
 
       if (input.category) {
