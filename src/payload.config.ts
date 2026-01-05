@@ -2,7 +2,7 @@
 import path from "path";
 import sharp from "sharp";
 import { fileURLToPath } from "url";
-import { buildConfig } from "payload";
+import { buildConfig, Config } from "payload";
 
 import { mongooseAdapter } from "@payloadcms/db-mongodb";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
@@ -38,7 +38,7 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    multiTenantPlugin({
+    multiTenantPlugin<Config>({
       collections: {
         products: {},
       },
